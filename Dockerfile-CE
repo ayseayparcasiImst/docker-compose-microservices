@@ -1,59 +1,6 @@
-############################################
-# Version: v.1.0
-# Description: 
-############################################
+FROM openjdk:8
 
-FROM ubuntu:20.04
+COPY CurrencyExchangeProject/target/currency-exchange.jar currency-exchange.jar
 
-ENV DEBIAN_FRONTEND noninteractive
-
-
-
- # install necessary packages
-RUN apt-get update
-RUN apt-get install -y vim wget curl openssh-server sudo
-RUN apt-get update && apt-get install -y iputils-ping && apt install net-tools && apt install -y iproute2
-
- # Install java
-RUN mkdir /usr/local/java
-ADD ./jdk-8u271-linux-x64.tar.gz /usr/local/java/
-RUN ln -s /usr/local/java/jdk1.8.0_271 /usr/local/java/jdk
-
- # Install supervisor tool
-RUN sudo apt-get install -y supervisor
-RUN sudo mkdir -p /var/log/supervisor
-
-
-COPY ./currency-exchange.jar /usr/local/currencyExchange/currency-exchange.jar
-COPY ./currencyExchange.properties  /usr/local/currencyExchange/currencyExchange.properties 
-
-
- # Add supervisord configuration file and copy the configuration file to the corresponding directory. 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
- # Copy images
-#COPY static/admin_login_image.jpg /event-map/images/static/admin_login_image.jpg
-#COPY static/admin-logo.ico /event-map/images/static/admin-logo.ico
-#COPY static/favicon.ico /event-map/images/static/favicon.ico
-#COPY static/web_login_image.jpg /event-map/images/static/web_login_image.jpg
-#COPY static/web-logo.ico /event-map/images/static/web-logo.ico
-
- # Set environment variables
-ENV JAVA_HOME /usr/local/java/jdk
-ENV JRE_HOME ${JAVA_HOME}/jre
-ENV CLASSPATH .:${JAVA_HOME}/lib:${JRE_HOME}/lib
-ENV PATH ${JAVA_HOME}/bin:$PATH
-ENV TZ=Europe/Istanbul
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
- # Open ports
-#EXPOSE 22 8443 8081
-
- # Delete downloaded packages
-RUN rm -rf /var/lib/apt/lists/*
-
-
- # Execute supervisord to execute 
-CMD ["/usr/bin/supervisord"]
-
-
+EXPOSE 8000
+ENTRYPOINT ["java","-jar","/currency-exchange.jar"]
