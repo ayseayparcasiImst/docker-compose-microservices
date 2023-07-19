@@ -1,5 +1,7 @@
 stage('Email Notification'){
-	emailext body: 'Hello World', recipientProviders: [developers()], subject: '', to: 'aysayparcasi@gmail.com'
+    mail bcc: '', body: '''Build successful!!!!
+    Thanks,
+    Ayse''', cc: '', from: '', replyTo: '', subject: 'Build successfull', to: 'aysayparcasi@gmail.com'
     echo 'e-mail OK!'
 }
 pipeline {
